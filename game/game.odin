@@ -44,7 +44,7 @@ play_game :: proc(
 	if bl.is_death(ball^) {
 		player.health -= 1
 		if player.health <= 0 do player.health = 0
-		rl.PlaySound(sounds.game_over)
+		rl.PlaySound(sounds.loss)
 	}
 
 	player2.pos.x = ball.pos.x - f32(player2.width) / 2
@@ -59,5 +59,27 @@ play_game :: proc(
 		pl.draw_player_health(player^)
 	} else {
 		game.play = false
+	}
+}
+
+handle_game_over :: proc(
+	using game: ^Game,
+	sounds: GameSounds,
+	player: ^pl.Player,
+	ball: ^bl.Ball,
+) {
+	if rl.IsKeyPressed(.SPACE) {
+		game.play = true
+		game.show_menu = false
+		bl.reset(ball)
+		pl.reset(player)
+		rl.PlaySound(sounds.lockandload)
+		stop_game_over_music(sounds)
+	} else if rl.IsKeyPressed(.M) {
+		game.play = false
+		game.show_menu = true
+		stop_game_over_music(sounds)
+		bl.reset(ball)
+		pl.reset(player)
 	}
 }
