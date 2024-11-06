@@ -73,6 +73,9 @@ draw_game_over :: proc(font_size: ^i32, text: cstring, x: ^i32, interval: ^i32) 
 			try := strings.clone_to_cstring("Press [Space] to restart")
 			try_x := width / 2 - 60
 			rl.DrawText(try, try_x, height - 100, 16, rl.BLUE)
+			try = strings.clone_to_cstring("Press [M] to go to menu")
+			try_x = width / 2 - 60
+			rl.DrawText(try, try_x, height - 70, 16, rl.BLUE)
 		}
 		interval^ += 1
 		if interval^ == 100 do interval^ = 1
