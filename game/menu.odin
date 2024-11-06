@@ -27,7 +27,10 @@ handle_menu :: proc(using menu: ^Menu, sounds: GameSounds) {
 		case "Play":
 			game.play = true
 			game.show_menu = false
+			rl.SeekMusicStream(sounds.play, 0)
 			rl.PlaySound(sounds.lockandload)
+		case "Exit":
+			game.running = false
 		}
 	}
 	if index < 0 do index = 0
