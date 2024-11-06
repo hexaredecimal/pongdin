@@ -33,7 +33,7 @@ main :: proc() {
 	game := gm.new_game()
 	menu := gm.new_menu(&game)
 	game_sound := gm.new_game_sounds()
-	for !rl.WindowShouldClose() {
+	for game.running {
 		if game.show_menu {
 			gm.play_menu_music(game_sound, game)
 			gm.handle_menu(&menu, game_sound)
@@ -53,6 +53,7 @@ main :: proc() {
 		}
 		rl.EndDrawing()
 	}
-	gm.free_sounds(&game_sound)
 	rl.CloseWindow()
+	rl.CloseAudioDevice()
+	gm.free_sounds(&game_sound)
 }
