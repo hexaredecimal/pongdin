@@ -29,6 +29,10 @@ main :: proc() {
 	text := strings.clone_to_cstring("Game Over!!!")
 	x := width / 2 - i32(rl.TextLength(text)) - 10
 
+	probe := pl.new()
+	probe.pos.x = f32(width / 2 - probe.width)
+	probe.pos.y = f32(height - 60)
+	probe.dx = 1
 	font := i32(10)
 	game := gm.new_game()
 	menu := gm.new_menu(&game)
@@ -45,11 +49,14 @@ main :: proc() {
 			if rl.IsMusicStreamPlaying(game_sound.menu_music) do gm.stop_menu_music(game_sound)
 			gm.play_game_play_music(game_sound, game)
 			gm.play_game(&player, &player2, &ball, &game, game_sound)
-		} else if !game.play && !game.show_menu {
+		} else if !game.play && !game.show_menu && !game.credits {
 			if rl.IsMusicStreamPlaying(game_sound.play) do gm.stop_game_play_music(game_sound)
 			gm.play_game_over_music(game_sound, game)
 			gm.handle_game_over(&game, game_sound, &player, &ball)
 			pl.draw_game_over(&font, text, &x, &interval)
+		} else if !game.play && !game.show_menu && game.credits {
+			gm.handle_game_credits(&game, game_sound)
+			gm.draw_game_credits(&probe)
 		}
 		rl.EndDrawing()
 	}
