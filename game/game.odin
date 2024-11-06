@@ -2,6 +2,7 @@ package game
 
 import bl "../ball"
 import pl "../player"
+import "core:fmt"
 import "core:strings"
 import rl "vendor:raylib"
 
@@ -10,10 +11,11 @@ Game :: struct {
 	play:      bool,
 	pause:     bool,
 	running:   bool,
+	credits:   bool,
 }
 
 new_game :: proc() -> Game {
-	return Game{true, false, false, true}
+	return Game{true, false, false, true, false}
 }
 
 play_game :: proc(
@@ -78,9 +80,13 @@ play_game :: proc(
 draw_game_pause_hud :: proc() {
 	width := rl.GetScreenWidth()
 	txt := "[space] to pause"
-	x := width - 90 - i32(len(txt))
+	x := width - 190
 	y := 10
 	text := strings.clone_to_cstring(txt)
+	rl.DrawText(text, x, i32(y), 12, rl.RED)
+
+	y += 20
+	text = strings.clone_to_cstring("[M] to go to main menu")
 	rl.DrawText(text, x, i32(y), 12, rl.RED)
 }
 
@@ -131,4 +137,47 @@ handle_game_over :: proc(
 		bl.reset(ball)
 		pl.reset(player)
 	}
+}
+
+handle_game_credits :: proc(game: ^Game, gamesounds: GameSounds) {
+	if rl.IsKeyPressed(.M) {
+		game.show_menu = true
+		game.play = false
+		game.pause = false
+		game.credits = false
+		rl.SeekMusicStream(gamesounds.menu_music, 0)
+	}
+}
+
+draw_game_credits :: proc(probe: ^pl.Player) {
+	width := rl.GetScreenWidth()
+	height := rl.GetScreenHeight()
+	x := width / 2 - 100
+	y := height / 2 - 100
+	text := strings.clone_to_cstring("[ODIN-OUT]")
+	rl.DrawText(text, x, i32(y), 32, rl.RED)
+	x -= 20
+	y += 50
+	text = strings.clone_to_cstring("Designed and Developed by:")
+	rl.DrawText(text, x, i32(y), 20, rl.BLUE)
+	y += 20
+	x -= 50
+	text = strings.clone_to_cstring("Gama Sibusiso")
+	rl.DrawText(text, x, i32(y), 15, rl.RED)
+
+	x += 140
+	text = strings.clone_to_cstring("github.com/hexaredecimal")
+	rl.DrawText(text, x, i32(y), 15, rl.BLUE)
+	x -= 100
+
+	y = height - 100
+	text = strings.clone_to_cstring("[M] to go back to main menu")
+	rl.DrawText(text, x, i32(y), 15, rl.ORANGE)
+
+	min := 10
+	max := width - 100
+	pl.draw_player(probe^)
+	probe.pos.x += probe.dx * probe.speed
+	if probe.pos.x <= f32(min) do probe.dx = 1
+	if probe.pos.x >= f32(max) do probe.dx = -1
 }

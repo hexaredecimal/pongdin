@@ -29,6 +29,10 @@ handle_menu :: proc(using menu: ^Menu, sounds: GameSounds) {
 			game.show_menu = false
 			rl.SeekMusicStream(sounds.play, 0)
 			rl.PlaySound(sounds.lockandload)
+		case "Credits":
+			game.play = false
+			game.show_menu = false
+			game.credits = true
 		case "Exit":
 			game.running = false
 		}
