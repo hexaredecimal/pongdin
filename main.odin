@@ -34,15 +34,21 @@ main :: proc() {
 	menu := gm.new_menu(&game)
 	game_sound := gm.new_game_sounds()
 	for !rl.WindowShouldClose() {
-		gm.play_menu_music(game_sound)
-		if game.show_menu do gm.handle_menu(&menu, game_sound)
+		if game.show_menu {
+			gm.play_menu_music(game_sound, game)
+			gm.handle_menu(&menu, game_sound)
+		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.WHITE)
 		if game.show_menu do gm.draw_menu(menu)
 		if game.play && !game.show_menu {
-			gm.stop_menu_music(game_sound)
+			if rl.IsMusicStreamPlaying(game_sound.menu_music) do gm.stop_menu_music(game_sound)
+			gm.play_game_play_music(game_sound, game)
 			gm.play_game(&player, &player2, &ball, &game, game_sound)
 		} else if !game.play && !game.show_menu {
+			if rl.IsMusicStreamPlaying(game_sound.play) do gm.stop_game_play_music(game_sound)
+			gm.play_game_over_music(game_sound, game)
+			gm.handle_game_over(&game, game_sound, &player, &ball)
 			pl.draw_game_over(&font, text, &x, &interval)
 		}
 		rl.EndDrawing()
