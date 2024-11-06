@@ -21,6 +21,18 @@ new :: proc() -> Ball {
 	return Ball{rl.Vector2{x, y}, radius, 4, 0, -1}
 }
 
+reset :: proc(ball: ^Ball) {
+	width := rl.GetScreenWidth()
+	height := rl.GetScreenHeight()
+	radius := ball.size
+	x := f32(width / 2) - radius
+	y := f32(height / 2) - radius
+	ball.pos = rl.Vector2{x, y}
+	ball.dx = 0
+	ball.dy = -1
+}
+
+
 draw_ball :: proc(using ball: Ball) {
 	rl.DrawCircle(i32(pos.x), i32(pos.y), size, rl.RED)
 }
