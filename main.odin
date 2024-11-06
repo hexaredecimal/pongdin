@@ -7,12 +7,18 @@ import "core:strings"
 import pl "player"
 import rl "vendor:raylib"
 
+import gm "game"
+
 width :: 600
 height :: 400
 
 main :: proc() {
 	rl.InitWindow(width, height, "Hellope")
 	rl.SetTargetFPS(60)
+	rl.InitAudioDevice()
+	rl.SetMasterVolume(100)
+
+
 	player := pl.new()
 	player2 := pl.new()
 	player.pos = rl.Vector2{width / 2, height - 20}
@@ -24,47 +30,23 @@ main :: proc() {
 	x := width / 2 - i32(rl.TextLength(text)) - 10
 
 	font := i32(10)
-
+	game := gm.new_game()
+	menu := gm.new_menu(&game)
+	game_sound := gm.new_game_sounds()
 	for !rl.WindowShouldClose() {
+		gm.play_menu_music(game_sound)
+		if game.show_menu do gm.handle_menu(&menu, game_sound)
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.WHITE)
-
-		if bl.check_collision(player, ball) {
-			ball.dy *= -1
-			hit_position := (ball.pos.x - player.pos.x) / f32(player.width)
-			max_angle := f32(0.8)
-			angle := hit_position * max_angle
-			ball.dx = angle * (player2.dx * ball.dx) + player2.speed / 2
-			if hit_position < 0.5 do ball.dx *= -1
+		if game.show_menu do gm.draw_menu(menu)
+		if game.play && !game.show_menu {
+			gm.stop_menu_music(game_sound)
+			gm.play_game(&player, &player2, &ball, &game, game_sound)
+		} else if !game.play && !game.show_menu {
+			pl.draw_game_over(&font, text, &x, &interval)
 		}
-
-		if bl.check_collision(player2, ball) {
-			ball.dy *= -1
-			hit_position := (ball.pos.x - player.pos.x) / f32(player.width)
-			max_angle := f32(0.8)
-			angle := hit_position * max_angle
-			ball.dx = angle * (player2.dx * ball.dx) + player2.speed / 2
-			if hit_position < 0.5 do ball.dx *= -1
-		}
-
-		if bl.is_death(ball) {
-			player.health -= 1
-			if player.health <= 0 do player.health = 0
-		}
-
-		player2.pos.x = ball.pos.x - f32(player2.width) / 2
-
-		if player.health > 0 {
-			pl.draw_player(player)
-			pl.draw_player(player2)
-			bl.draw_ball(ball)
-			bl.move_ball(&ball)
-
-			pl.move_player(&player)
-			pl.draw_player_health(player)
-		} else do pl.draw_game_over(&font, text, &x, &interval)
 		rl.EndDrawing()
 	}
-
+	gm.free_sounds(&game_sound)
 	rl.CloseWindow()
 }
