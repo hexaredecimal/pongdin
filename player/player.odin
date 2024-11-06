@@ -19,6 +19,14 @@ new :: proc() -> Player {
 	return Player{0, 7.5, 5, rect_width, rect_height, 0, rl.BLUE}
 }
 
+reset :: proc(player: ^Player) {
+	player.health = 5
+	player.dx = 0
+	width := rl.GetScreenWidth()
+	height := rl.GetScreenHeight()
+	player.pos = rl.Vector2{f32(width / 2), f32(height - 20)}
+}
+
 draw_player :: proc(using player: Player) {
 	rl.DrawRectangle(i32(pos.x), i32(pos.y), width, height, color)
 }
