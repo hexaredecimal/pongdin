@@ -154,7 +154,7 @@ draw_game_credits :: proc(probe: ^pl.Player) {
 	height := rl.GetScreenHeight()
 	x := width / 2 - 100
 	y := height / 2 - 100
-	text := strings.clone_to_cstring("[ODIN-OUT]")
+	text := strings.clone_to_cstring("[PONG-DIN]")
 	rl.DrawText(text, x, i32(y), 32, rl.RED)
 	x -= 20
 	y += 50
