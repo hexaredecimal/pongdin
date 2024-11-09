@@ -1,6 +1,6 @@
 
-# Odinout
->> Breakout game in odin lang
+# PONGDIN 
+>> PONG game in odin lang
 
 ## Why?
 1. First time using odin, so to learn
